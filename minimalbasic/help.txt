@@ -1,0 +1,30 @@
+Welcome to MinimalBASIC!
+-------------------------------------------------------------------------------------------------
+List1 : Commands to control the BASIC interpreter
+
+RUN   : This command starts program execution beginning at the lowest-numbered line.
+LIST  : This command lists the steps in the program in numerical sequence.
+CLEAR : This command deletes the program so the user can start entering a new one.
+HELP  : This command provides a simple help message describing your interpreter.
+QUIT  : Typing QUIT exits from the BASIC interpreter by calling exit(0).
+
+-------------------------------------------------------------------------------------------------
+List2 : Statements implemented in the minimal version of BASIC
+
+
+REM : This statement is used for comments. Any text on the line after the keyword REM is ignored.
+
+LET : This statement is BASIC’s assignment statement. The LET keyword is followed by a variable name, an equal sign, and an expression. As in C++, the effect of this statement is to assign the value of the expression to the variable, replacing any previous value. In BASIC, assignment is not an operator and may not be nested inside other expressions.
+
+PRINT : The effect of this statement is to print the value of the expression on the console and then print a newline character so that the output from the next PRINT statement begins on a new line.
+
+INPUT : The effect of this statement is to print a prompt consisting of the string " ? " and then to read in a value to be stored in the variable.
+
+GOTO :  When the program hits this statement, the program continues from line n instead of continuing with the next statement. Your program should report an error if line n does not exist.
+
+IF : IF exp1 op exp2 THEN n. where exp1 and exp2 are expressions and op is one of the conditional operators =, <, or >. If the condition holds, the program should continue from line n just as in the GOTO statement. If not, the program continues on to the next line.
+
+END : Marks the end of the program. Execution halts when this line is reached. This statement is usually optional in BASIC programs because execution also stops if the program continues past the last numbered line.
+
+-------------------------------------------------------------------------------------------------
+Have fun!
