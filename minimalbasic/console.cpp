@@ -10,9 +10,6 @@ Console::Console(QWidget *parent) : QTextEdit(parent)
 {
     //connect(this,&Console::newLineWritten,this,&Console::write);
 
-    Parser = new parser();
-    connect(this,&Console::newLineWritten,Parser,&parser::parseCommand);
-    connect(Parser,&parser::printSignal,this,&Console::write);
     this->setTextBackgroundColor(QColor(QString("black")));
     this->setTextColor(QColor(QString("white")));
     this->setFont(QFont(QString("Consolas")));
@@ -60,4 +57,9 @@ void Console::keyPressEvent(QKeyEvent *event)
 void Console::write(QString msg)
 {
     this->append(msg);
+}
+
+void Console::inputWaitFunction(QString msg){
+    qDebug() << "input " << msg;
+
 }

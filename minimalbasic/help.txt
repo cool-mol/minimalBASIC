@@ -1,5 +1,5 @@
 Welcome to MinimalBASIC!
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 List1 : Commands to control the BASIC interpreter
 
 RUN   : This command starts program execution beginning at the lowest-numbered line.
@@ -8,7 +8,7 @@ CLEAR : This command deletes the program so the user can start entering a new on
 HELP  : This command provides a simple help message describing your interpreter.
 QUIT  : Typing QUIT exits from the BASIC interpreter by calling exit(0).
 
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 List2 : Statements implemented in the minimal version of BASIC
 
 
@@ -26,5 +26,5 @@ IF : IF exp1 op exp2 THEN n. where exp1 and exp2 are expressions and op is one o
 
 END : Marks the end of the program. Execution halts when this line is reached. This statement is usually optional in BASIC programs because execution also stops if the program continues past the last numbered line.
 
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 Have fun!

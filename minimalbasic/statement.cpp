@@ -38,6 +38,8 @@ QString statement::difStmtCommand(QString s)
     QString firstWord, otherWord;
     firstWord = s.section(' ', 0, 0);
     otherWord = s.section(' ', 1, -1);
+    bool flag = false;
+    otherWord.toInt(&flag);
     if (!staTable.contains(firstWord))
     {
         return "wrong";
@@ -48,13 +50,16 @@ QString statement::difStmtCommand(QString s)
         {
             switch (staTable[firstWord])
             {
+
             case RemStmt:
                 break;
+
             case LetStmt:
                 convertToExp(otherWord);
                 expression->eval(*evaContext);
                 delete expression;
                 break;
+
             case PrintStmt:
             {
                 convertToExp(otherWord);
@@ -62,10 +67,17 @@ QString statement::difStmtCommand(QString s)
                 delete expression;
                 return "print " + QString::number(num);
             }
-            case InputStmt:
 
-                break;
+            case InputStmt:
+                if(otherWord.section(' ',0,0) != otherWord.section(' ',-1,-1)){
+                    return "wrong";
+                }
+                if(flag) throw QString(" no such number.");
+
+                return QString("input ") + otherWord;
+
             case GotoStmt:
+                if(!flag) throw QString(" no such number.");
                 return s.section(' ', 1, 1);
             case IfStmt:
             {
@@ -105,13 +117,14 @@ QString statement::difStmtCommand(QString s)
                 else
                     break;
             }
+
             case EndStmt:
                 return "end";
             }
         }
         catch (QString s)
         {
-            return "WRONG : " + s;
+            return QString("WRONG : ") + s;
         }
     }
     return "";

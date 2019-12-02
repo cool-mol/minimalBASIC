@@ -10,7 +10,7 @@ class Console : public QTextEdit
 {
     Q_OBJECT
 private:
-    parser *Parser;
+    //parser *Parser;
 public:
     explicit Console(QWidget *parent = nullptr);
 
@@ -20,7 +20,7 @@ signals:
 public slots:
 //    void clear();
     void write(QString msg);
-
+    void inputWaitFunction(QString msg);
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 };

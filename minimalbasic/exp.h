@@ -98,7 +98,7 @@ public:
    void setValue(QString var, int value);
    int getValue(QString var);
    bool isDefined(QString var);
-
+    QMap<QString,int> *getTable();
 private:
 
    QMap<QString,int> symbolTable;

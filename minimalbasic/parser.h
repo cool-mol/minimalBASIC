@@ -12,18 +12,19 @@ class parser : public QObject
 private:
     evalstate *eva;
     QString firstWord;
-public:
     statement *sta;
+public:
+    int inputLineNum;
     explicit parser(QObject *parent = nullptr);
 signals:
     void stateCommand(QString s);
-    void wrongCase(QString s);
     void printSignal(QString s);
     void runFunctionSignal();
+    void inputSignal(QString s);
 public slots:
     void parseCommand(QString msg);
-    void writeFromExp(QString msg);
-    QString RunFunction();
+    QString RunFunction(int LineNumber);
+    void reserveNumber(QString num);
 };
 
 #endif // PARSER_H

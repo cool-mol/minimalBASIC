@@ -2,16 +2,18 @@
 #include <fstream>
 #include <QDir>
 #include <QThread>
+#include <iterator>
 parser::parser(QObject *parent) : QObject(parent)
 {
     eva = new evalstate();
     connect(this,&parser::stateCommand,eva,&evalstate::keepStateLine);
-    connect(this,&parser::runFunctionSignal,this,&parser::RunFunction);
+    sta = nullptr;
 }
 
 
 void parser::parseCommand(QString msg){
     qDebug() << "abc";
+    QVector<everyLine> *l = eva->getLine();
     firstWord = msg.section(' ',0,0);
     bool flag = false;
     firstWord.toInt(&flag);
@@ -19,7 +21,10 @@ void parser::parseCommand(QString msg){
         emit stateCommand(msg);
     }else if(firstWord == "RUN"){
 //        emit runFunctionSignal();
-        RunFunction();
+        int num = -1;
+
+        if(!l->empty()) num = (*l)[0].lineNum;
+        RunFunction(num);
     }else if(firstWord == "LIST"){
         QVector<everyLine> *l = eva->getLine();
         for(int i = 0;i < l->size();i ++){
@@ -54,13 +59,17 @@ void parser::parseCommand(QString msg){
 
 }
 
-QString parser::RunFunction(){
-    sta = new statement();
+QString parser::RunFunction(int LineNumber){
+    if(sta == nullptr){
+        sta = new statement();
+    }
     QVector<everyLine> *l = eva->getLine();
     QString Cmd;
-    int index = 0, line;
+    int index = 0, line = LineNumber;
+    for(index = 0;index < (*l).size();index ++){
+        if(line == (*l)[index].lineNum) break;
+    }
     if(!l->empty()) {
-        line = (*l)[0].lineNum;
         Cmd = sta->difStmtCommand((*l)[index].everyCommand);
         while (Cmd != "end"){
             bool flag;
@@ -87,7 +96,13 @@ QString parser::RunFunction(){
                 index ++;
                 if(index == l->size()) break;
                 line = (*l)[index].lineNum;
-            }else if(Cmd.section(' ',0,0) == "WRONG"){
+            }else if(Cmd.section(' ', 0 , 0) == "input"){
+                inputLineNum = (*l)[++index].lineNum;
+                sta->evaContext->setValue(Cmd.section(' ',1,1),-1);
+                emit inputSignal(Cmd.section(' ',1,1));
+                return "input";
+            }
+            else if(Cmd.section(' ',0,0) == "WRONG"){
                 emit printSignal("WRONG:line " + QString::number(line) + Cmd.section(' ',1));
                 break;
             }
@@ -104,11 +119,26 @@ QString parser::RunFunction(){
             }
         }
     }
-    delete sta;
+    if(index == l->size()){
+        delete sta;
+        sta =  nullptr;
+    }
     return "";
 }
 
-
-void parser::writeFromExp(QString msg){
-    emit printSignal(msg);
+void parser::reserveNumber(QString num){
+    bool flag = false;
+    int number = num.toInt(&flag);
+    if(!flag) {
+        emit printSignal("Wrong Input : " + num + " !");
+        return;
+    }
+    QMap<QString, int>::iterator i;
+    QMap<QString, int> *Table = sta->evaContext->getTable();
+    for(i = Table->begin(); i != Table->end();i ++){
+        if(i.value() == -1){
+            qDebug() << "heihei " << i.key() << num ;
+            sta->evaContext->setValue(i.key(),number);
+        }
+    }
 }

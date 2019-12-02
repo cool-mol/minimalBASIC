@@ -72,3 +72,4 @@ Expression *CompoundExp::getRHS(){return rhs;}
 void EvaluationContext::setValue(QString var, int value){symbolTable[var] = value;}
 int EvaluationContext::getValue(QString var){return symbolTable[var];}
 bool EvaluationContext::isDefined(QString var){return symbolTable.contains(var);}
+QMap<QString,int>* EvaluationContext::getTable(){return &symbolTable;}
