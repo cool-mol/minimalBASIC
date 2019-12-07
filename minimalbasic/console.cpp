@@ -9,7 +9,7 @@
 Console::Console(QWidget *parent) : QTextEdit(parent)
 {
     //connect(this,&Console::newLineWritten,this,&Console::write);
-
+    this->setStyleSheet(QString("background-color:black"));
     this->setTextBackgroundColor(QColor(QString("black")));
     this->setTextColor(QColor(QString("white")));
     this->setFont(QFont(QString("Consolas")));

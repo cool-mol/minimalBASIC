@@ -13,6 +13,7 @@ private:
     evalstate *eva;
     QString firstWord;
     statement *sta;
+    statement *promptSta;
 public:
     int inputLineNum;
     explicit parser(QObject *parent = nullptr);

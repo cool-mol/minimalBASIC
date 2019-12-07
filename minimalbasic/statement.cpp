@@ -72,7 +72,7 @@ QString statement::difStmtCommand(QString s)
                 if(otherWord.section(' ',0,0) != otherWord.section(' ',-1,-1)){
                     return "wrong";
                 }
-                if(flag) throw QString(" no such number.");
+                if(flag) throw QString(" can't be a number.");
 
                 return QString("input ") + otherWord;
 

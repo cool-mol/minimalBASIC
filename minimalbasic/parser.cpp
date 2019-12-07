@@ -8,6 +8,8 @@ parser::parser(QObject *parent) : QObject(parent)
     eva = new evalstate();
     connect(this,&parser::stateCommand,eva,&evalstate::keepStateLine);
     sta = nullptr;
+    promptSta = new statement();
+//    inputLineNum = INT_MAX;
 }
 
 
@@ -15,16 +17,19 @@ void parser::parseCommand(QString msg){
     qDebug() << "abc";
     QVector<everyLine> *l = eva->getLine();
     firstWord = msg.section(' ',0,0);
-    bool flag = false;
+    bool flag = false, flag2 = false;
     firstWord.toInt(&flag);
-    if(flag){
+    msg.section(' ',1 ,1).toInt(&flag2);
+    if(flag && firstWord.toInt() > 0){
         emit stateCommand(msg);
     }else if(firstWord == "RUN"){
 //        emit runFunctionSignal();
         int num = -1;
-
         if(!l->empty()) num = (*l)[0].lineNum;
+        delete promptSta;
+        promptSta = new statement();
         RunFunction(num);
+//        inputLineNum = -1;
     }else if(firstWord == "LIST"){
         QVector<everyLine> *l = eva->getLine();
         for(int i = 0;i < l->size();i ++){
@@ -52,7 +57,23 @@ void parser::parseCommand(QString msg){
         }
     }else if(firstWord == "QUIT"){
         exit(0);
-    }else{
+    }else if(firstWord == "PRINT"){
+        QString Cmd = promptSta->difStmtCommand(msg);
+        qDebug() << Cmd;
+        if(Cmd.section(' ', 0, 0) == "WRONG"){
+            emit printSignal(Cmd);
+        }else   emit printSignal(Cmd.section(' ', 1, 1));
+    }else if(firstWord == "LET"){
+        if(!flag2){
+            QString Cmd = promptSta->difStmtCommand(msg);
+        }else {
+            emit printSignal("Wrong Command! Can't be Number!");
+        }
+    }else if(firstWord == "INPUT"){
+        promptSta->evaContext->setValue(msg.section(' ',1,1),-1);
+        emit inputSignal(msg.section(' ',1,1) + " p");
+    }
+    else{
         emit printSignal("Wrong Command! Please type \"HELP\" to get help.");
     }
 
@@ -60,6 +81,9 @@ void parser::parseCommand(QString msg){
 }
 
 QString parser::RunFunction(int LineNumber){
+//    if(inputLineNum == -1){
+//        return "";
+//    }
     if(sta == nullptr){
         sta = new statement();
     }
@@ -134,11 +158,17 @@ void parser::reserveNumber(QString num){
         return;
     }
     QMap<QString, int>::iterator i;
-    QMap<QString, int> *Table = sta->evaContext->getTable();
+    statement *s;
+    if(firstWord == "INPUT") s = promptSta;
+    else s = sta;
+    QMap<QString, int> *Table = s->evaContext->getTable();
     for(i = Table->begin(); i != Table->end();i ++){
         if(i.value() == -1){
             qDebug() << "heihei " << i.key() << num ;
-            sta->evaContext->setValue(i.key(),number);
+            s->evaContext->setValue(i.key(),number);
         }
+    }
+    if(firstWord != "INPUT") {
+        this->RunFunction(inputLineNum);
     }
 }

@@ -14,6 +14,12 @@ BasicWindow::BasicWindow(QWidget *parent)
     connect(Parser,&parser::printSignal,console,&Console::write);
     connect(Parser,&parser::inputSignal,this,&BasicWindow::callFromParser);
     connect(this,&BasicWindow::inputNumSignal,Parser,&parser::reserveNumber);
+    this->setGeometry(400,150,600,601);
+}
+
+void BasicWindow::resizeEvent(QResizeEvent *){
+    console->setGeometry(0,0,this->width(),this->height());
+
 }
 
 BasicWindow::~BasicWindow()
@@ -31,5 +37,4 @@ void BasicWindow::callFromConsole(QString msg){
     connect(console,&Console::newLineWritten,Parser,&parser::parseCommand);
     disconnect(console,&Console::newLineWritten,this,&BasicWindow::callFromConsole);
     emit inputNumSignal(msg);
-    Parser->RunFunction(Parser->inputLineNum);
 }

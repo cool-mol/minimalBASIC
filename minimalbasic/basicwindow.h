@@ -3,12 +3,17 @@
 
 #include <QMainWindow>
 #include "console.h"
+#include <QLayout>
+#include <QSizePolicy>
 class BasicWindow : public QMainWindow
 {
     Q_OBJECT
 private:
     Console *console;
     parser *Parser;
+protected:
+    void resizeEvent(QResizeEvent *);
+
 public:
     BasicWindow(QWidget *parent = nullptr);
     ~BasicWindow();
