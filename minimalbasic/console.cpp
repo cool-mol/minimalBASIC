@@ -18,21 +18,14 @@ Console::Console(QWidget *parent) : QTextEdit(parent)
 void Console::keyPressEvent(QKeyEvent *event)
 {
     //退格和delete都是把这行清空
-    this->setTextColor(QColor(QString("lightblue")));
-    if (event->key() == Qt::Key_Backspace){
-        QTextCursor cursor = textCursor();
-        cursor.movePosition(QTextCursor::End);
-        cursor.select(QTextCursor::LineUnderCursor);
-        cursor.removeSelectedText();
-        return;
-    }
-    if (event->key() == Qt::Key_Delete){
-        QTextCursor cursor = textCursor();
-        cursor.movePosition(QTextCursor::End);
-        cursor.select(QTextCursor::LineUnderCursor);
-        cursor.removeSelectedText();
-        return;
-    }
+    this->setTextColor(QColor(QString("lightgreen")));
+    if (event->key() == Qt::Key_Backspace) this->textCursor().clearSelection();
+        if (event->key() == Qt::Key_Delete) {
+            QTextCursor cursor = this->textCursor();
+            cursor.movePosition(QTextCursor::End);
+            cursor.select(QTextCursor::LineUnderCursor);
+            cursor.removeSelectedText();
+        }
     if (this->textCursor().hasSelection())
         return;
     if (event->key() == Qt::Key_Return) {

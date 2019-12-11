@@ -19,6 +19,7 @@ class statement : public QObject
 private:
     QMap<QString, statementType> staTable;
     Expression *recursionForExp(QStringList &exp, int x, int y);
+    bool isNormal(QStringList &e, int index);
 //    QMutex  _mutex;
 public:
     Expression *expression;

@@ -83,7 +83,7 @@ public:
    virtual QString getOperator();
    virtual Expression *getLHS();
    virtual Expression *getRHS();
-
+   virtual int Pow(int x, int y);
 private:
 
    QString op;

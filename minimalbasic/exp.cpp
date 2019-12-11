@@ -1,5 +1,5 @@
 #include "exp.h"
-
+#include <QtMath>
 /*
  * Functions in Expression are defined here.
 */
@@ -56,12 +56,21 @@ int CompoundExp::eval(EvaluationContext & context){
           }
           return left / right;
        }
+       if (op == "**") {
+           return Pow(left, right);
+       }
        throw (QString("Illegal operator in expression"));
 
 }
 QString CompoundExp::CompoundExp::toString(){return "";}
 ExpressionType CompoundExp::type(){return COMPOUND;}
-
+int CompoundExp::Pow(int x, int y){
+    qreal X = x;
+    qreal Y = y;
+    qreal ret = qPow(X, Y);
+    int r = ret;
+    return r;
+}
 QString CompoundExp::getOperator(){return op;}
 Expression *CompoundExp::getLHS(){return lhs;}
 Expression *CompoundExp::getRHS(){return rhs;}

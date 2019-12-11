@@ -20,7 +20,7 @@
 //#======`-.____`-.___\_____/___.-`____.-'======
 //#                   `=---='
 //#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//#  佛祖保佑 代码高性能 不宕机 无bug
+//#          佛祖保佑 代码高性能 不宕机 无bug
 statement::statement(QObject *parent) : QObject(parent)
 {
     staTable["REM"] = RemStmt;
@@ -138,6 +138,12 @@ void statement::convertToExp(QString s){
     // 将输入进来的字符串初始化，放在holeExpression里
     for(int i = 0;i < s.size();i ++){
         if(s[i] == '=' || s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/' || s[i] == '(' || s[i] == ')'){
+            if(s[i] == '*' && s[i+1] == '*') {
+                s.insert(i++, ' ');
+                s.insert(i + 2, ' ');
+                i = i + 2;
+                continue;
+            }
             s.insert(i++, ' ');
             s.insert(i + 1, ' ');
         }
@@ -145,6 +151,15 @@ void statement::convertToExp(QString s){
     s = s.trimmed();
     s.replace(QRegExp("[\\s]+"), " ");
     holeExpression = s.split(' ');
+    if(holeExpression.size() == 2) throw QString("Wrong Expression");
+    for(int i = 0;i < holeExpression.size();i ++) {
+        if(i == 0 && (holeExpression[i] == "*" || holeExpression[i] == "-" || holeExpression[i] == "+" || holeExpression[i] == "/" || holeExpression[i] == ")")) throw QString("Wrong Expression");
+        if(i == holeExpression.size() - 1 && (holeExpression[i] == "*" || holeExpression[i] == "-" || holeExpression[i] == "+" || holeExpression[i] == "/" || holeExpression[i] == "(")) throw QString("Wrong Expression");
+
+        if(i == 0 || i == holeExpression.size() - 1) continue;
+        if(!isNormal(holeExpression, i)) throw QString("Wrong Expression");
+    }
+
     expression = recursionForExp(holeExpression, 0, holeExpression.size());
 }
 
@@ -174,7 +189,7 @@ Expression *statement::recursionForExp(QStringList &exp, int x, int y)
            e_p记录当前表达式中括号最右边的=位置
     */
     int local_r = 0;
-    int m_m_p = 0, a_s_p = 0, e_p = 0;
+    int m_m_p = 0, a_s_p = 0, e_p = 0, p_p = 0;
     int bracketFlag = 0; // 是否在括号外面，如果在括号外面则为0
     for (int i = x; i < y; i++)
     {
@@ -188,14 +203,21 @@ Expression *statement::recursionForExp(QStringList &exp, int x, int y)
                 a_s_p = i;
             else if (exp[i] == "+" || exp[i] == "-")
                 m_m_p = i;
-            else if (exp[i] == "=")
+            else if (exp[i] == "="){
+                if(e_p != 0) continue;
                 e_p = i;
+            }else if(exp[i] == "**"){
+                if(p_p != 0) continue;
+                p_p = i;
+            }
         }
     }
-    if ((m_m_p == 0) && (a_s_p == 0) && (e_p == 0))
+    if ((m_m_p == 0) && (a_s_p == 0) && (e_p == 0) && (p_p == 0)){
+        // TODO：add IF to throw wrong
         //如果式子整个有括号如(5-2*3+7)，即括号外面没有操作符，则去掉括号找二叉树
+
         return recursionForExp(exp, x + 1, y - 1);
-    else
+    } else
     {
         //如果有+或者-，则根节点为最右边的+或-，否则是最右边的*或/
         if (e_p > 0)
@@ -204,8 +226,23 @@ Expression *statement::recursionForExp(QStringList &exp, int x, int y)
             local_r = m_m_p;
         else if (a_s_p > 0)
             local_r = a_s_p;
+        else if (p_p > 0)
+            local_r = p_p;
         //确定根节点和根节点的左孩子和右孩子
         Expression *b = new CompoundExp(exp[local_r], recursionForExp(exp, x, local_r), recursionForExp(exp, local_r + 1, y));
         return b;
     }
+}
+
+bool statement::isNormal(QStringList &e, int index){
+    QString str = "+-**/";
+    if(e[index] == "+" || e[index] == "-" || e[index] == "*" || e[index] == "/" || e[index] == "**" || e[index] == "(" || e[index] == ")"){
+        return !str.contains(e[index - 1]) && !str.contains(e[index + 1]);
+    } else{
+        return str.contains(e[index - 1]) && str.contains(e[index + 1]);
+    }
+//    bool flag = false;
+//    e[index].toInt(&flag);
+
+//    return true;
 }
